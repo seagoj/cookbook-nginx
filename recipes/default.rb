@@ -6,7 +6,7 @@
   end
   
   cookbook_file '/etc/nginx/sites-available/default' do
-    source "config/nginx.conf"
+    source "nginx.conf"
     mode "0777"
   end
   
