@@ -5,7 +5,7 @@ service 'nginx' do
   action :enable
 end
   
-cookbook_file '/etc/nginx/nginx.conf'
+cookbook_file '/etc/nginx/nginx.conf' do
   source "nginx.conf"
   mode "0777"
 end
