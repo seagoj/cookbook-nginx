@@ -1,4 +1,4 @@
-%w(libc6 libpcre3 libpcre3-dev libpcrecpp0 libssl0.9.8 libssl-dev zlib1g zlib1g-dev lsb-base).each do |p|
+%w(make libc6 libpcre3 libpcre3-dev libpcrecpp0 libssl0.9.8 libssl-dev zlib1g zlib1g-dev lsb-base).each do |p|
   package p
 end
 
@@ -37,7 +37,7 @@ end
 
 execute "Create log and config directories" do
   user "root"
-  command "mkdir /var/log/nginx && mkdir /etc/nginx/sites-available && mkdir /etc/nginx/sites=enabled"
+  command "mkdir /etc/nginx/sites-available && mkdir /etc/nginx/sites=enabled"
 end
   
 # service 'nginx' do
@@ -50,10 +50,10 @@ cookbook_file '/etc/nginx/nginx.conf' do
   mode "0777"
 end
 
-execute "Copy sites-available" do
-  user "root"
-  command "cp /vagrant/cookbooks/nginx/files/default/sites-available/* /etc/nginx/sites-available"
-end
+#execute "Copy sites-available" do
+#  user "root"
+#  command "cp /vagrant/cookbooks/nginx/files/default/sites-available/* /etc/nginx/sites-available"
+#end
   
 # service 'nginx' do
 #   supports :status => true, :restart => true, :reload => true
