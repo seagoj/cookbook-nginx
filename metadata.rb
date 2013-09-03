@@ -1,6 +1,11 @@
-name              "nginx"
-description       "Installs and configures nginx"
-version           "0.1"
-depends           "apt"
-
-recipe "nginx", "Installs nginx package and sets up configuration"
+name                "nginx"
+description         "Installs and configures nginx"
+long_description    IO.read(File.join(File.dirname(__FILE__), 'README.markdown'))
+version             "1.0.0"
+license             "MIT"
+depends             "apt"
+provides            "nginx"
+recipe              "nginx", "Installs and configures nginx"
+supports            "ubuntu"
+maintainer          "Jeremy Seago"
+maintainer_email    "seagoj@gmail.com"
