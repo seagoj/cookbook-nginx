@@ -2,65 +2,61 @@
   package p
 end
 
-remote_file "/usr/src/nginx-1.4.2.tar.gz" do
-  source "http://nginx.org/download/nginx-1.4.2.tar.gz"
-  mode "0777"
+remote_file "#{node[:nginx][:source_dir]}/nginx-#{node[:nginx][:version]}.tar.gz" do
+  source node[:nginx][:remote_source]
+  mode 00640
 end
 
 execute "Unpack tarball" do
-  cwd "/usr/src/"
-  user "root"
-  command "tar -xzf nginx-1.4.2.tar.gz"
+  cwd node[:nginx][:source_dir]
+  user node[:nginx][:user]
+  command "tar -xzf nginx-#{node[:nginx][:version]}.tar.gz"
 end
 
 execute "Configure Nginx" do
-  cwd "/usr/src/nginx-1.4.2"
-  user "root"
-  command "./configure --prefix=/usr --sbin-path=/usr/sbin --pid-path=/var/run/nginx.pid --conf-path=/etc/nginx/nginx.conf --error-log-path=/var/log/nginx/error.log --http-log-path=/var/log/nginx/access.log --user=www-data --group=www-data --with-http_ssl_module --with-http_spdy_module --with-ipv6"
+  cwd "#{node[:nginx][:source_dir]}/nginx-#{node[:nginx][:version]}"
+  user node[:nginx][:user]
+  command "./configure #{node[:nginx][:build_config]}"
 end
 
 execute "Build & Install Nginx" do
-  cwd "/usr/src/nginx-1.4.2"
-  user "root"
+  cwd "#{node[:nginx][:source_dir]}/nginx-#{node[:nginx][:version]}"
+  user node[:nginx][:user]
   command "make && make install"
 end
 
 cookbook_file "/etc/init.d/nginx" do
   source "nginx-init"
-  mode "0755"
+  owner node[:nginx][:user]
+  group node[:nginx][:group]
+  mode 00755
 end
 
-execute "Enable Nginx Service" do
-  user "root"
-  command "update-rc.d nginx defaults"
-end
-
-execute "Create log and config directories" do
-  user "root"
-  command "mkdir /etc/nginx/sites-available && mkdir /etc/nginx/sites=enabled"
-end
-  
-# service 'nginx' do
-#  supports :status => true, :restart => true, :reload => true
-#  action :enable
-# end
-  
-cookbook_file '/etc/nginx/nginx.conf' do
-  source "nginx.conf"
-  mode "0777"
-end
-
-#execute "Copy sites-available" do
-#  user "root"
-#  command "cp /vagrant/cookbooks/nginx/files/default/sites-available/* /etc/nginx/sites-available"
+#directory node[:nginx][:config_dir] do
+#  owner node[:nginx][:user]
+#  group node[:nginx][:group]
+#  mode 00755
+#  action :create
+#  recursive true
 #end
-  
-# service 'nginx' do
-#   supports :status => true, :restart => true, :reload => true
-#   action :start
-# end
 
-execute "Start NGinx service" do
-  user "root"
-  command "service nginx start"
+# Create config subdirectories
+%w(sites-avaliable sites-enabled).each do |d|
+  directory "#{node[:nginx][:config_dir]}/#{d}" do
+    owner node[:nginx][:user]
+    group node[:nginx][:group]
+    mode 00755
+    action :create
+    recursive true
+  end
+end
+
+cookbook_file "#{node[:nginx][:config_dir]}/nginx.conf" do
+  source "nginx.conf"
+  mode 00640
+end
+
+service 'nginx' do
+   supports :status => true, :restart => true, :reload => true
+   action [:enable, :restart]
 end
