@@ -32,17 +32,8 @@ cookbook_file "/etc/init.d/nginx" do
   mode 00755
 end
 
-<<<<<<< HEAD
-#directory node[:nginx][:config_dir] do
-#  owner node[:nginx][:user]
-#  group node[:nginx][:group]
-#  mode 00755
-#  action :create
-#  recursive true
-#end
-
 # Create config subdirectories
-%w(sites-avaliable sites-enabled).each do |d|
+%w(sites-available sites-enabled).each do |d|
   directory "#{node[:nginx][:config_dir]}/#{d}" do
     owner node[:nginx][:user]
     group node[:nginx][:group]
@@ -52,19 +43,6 @@ end
   end
 end
 
-=======
-# Create config subdirectories
-%w(sites-avaliable sites-enabled).each do |d|
-  directory "#{node[:nginx][:config_dir]}/#{d}" do
-    owner node[:nginx][:user]
-    group node[:nginx][:group]
-    mode 00755
-    action :create
-    recursive true
-  end
-end
-
->>>>>>> 34cd42fbe4b178a4e08193652da003f012268e79
 cookbook_file "#{node[:nginx][:config_dir]}/nginx.conf" do
   source "nginx.conf"
   mode 00640
@@ -72,9 +50,5 @@ end
 
 service 'nginx' do
    supports :status => true, :restart => true, :reload => true
-<<<<<<< HEAD
    action [:enable, :restart]
-=======
-   action [:enable, :start]
->>>>>>> 34cd42fbe4b178a4e08193652da003f012268e79
 end
