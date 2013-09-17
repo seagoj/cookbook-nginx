@@ -32,14 +32,6 @@ cookbook_file "/etc/init.d/nginx" do
   mode 00755
 end
 
-#directory node[:nginx][:config_dir] do
-#  owner node[:nginx][:user]
-#  group node[:nginx][:group]
-#  mode 00755
-#  action :create
-#  recursive true
-#end
-
 # Create config subdirectories
 %w(sites-avaliable sites-enabled).each do |d|
   directory "#{node[:nginx][:config_dir]}/#{d}" do
